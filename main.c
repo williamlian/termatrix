@@ -29,7 +29,7 @@ int main() {
 	init_color(100, 1000,1000,1000); //bright white
 	init_color(101, 700,700,700); //greenish dim white
 	init_pair(1, COLOR_WHITE, COLOR_BLACK);
-	init_pair(2, 101, COLOR_BLACK);
+	init_pair(2, COLOR_WHITE, COLOR_BLACK);
 	init_pair(3, COLOR_GREEN, COLOR_BLACK);
 
 	//clear screen
@@ -43,8 +43,8 @@ int main() {
 		c->col = i;
 		c->max_row = row;
 		c->delay_ms = random_delay();
-		c->length = (row/2) + (rand() % (int)(row / 2)); //at least half screenful
-		c->gap = rand() % (int)(row / 2); //at most half screenful
+		c->length = (row/2) + (rand() % (int)(row / 2)); 
+		c->gap = (row/2) + rand() % (int)(row / 2); 
 		c->current_row = 0;
 		c->step_count = 0;
 	}
@@ -60,19 +60,22 @@ int main() {
 					if(c->step_count <= c->length) {
 						//print char
 						mvaddch(c->current_row,c->col,random_char());
-						chgat(0,A_BOLD,1,NULL);
+						mvchgat(c->current_row,c->col,1,A_BOLD,1,NULL);
 					}
 					else {
 						//print gap
 						mvaddch(c->current_row,c->col,' ');
 						c->step_count++;
 					}
-					//dim previous char
+					//dim white previous char
 					int prev1 = (c->current_row + c->max_row - 1) % c->max_row;
 					mvchgat(prev1,c->col,1,A_NORMAL,2,NULL);
 					//green out the one before previous
 					int prev2 = (c->current_row + c->max_row - 2) % c->max_row;
-					mvchgat(prev2,c->col,1,A_NORMAL,3,NULL);
+					mvchgat(prev2,c->col,1,A_BOLD,3,NULL);
+					//dim out the 10-th before previous
+					int prev5 = (c->current_row + c->max_row - 10) % c->max_row;
+					mvchgat(prev5,c->col,1,A_DIM,3,NULL);
 					c->step_count++;
 				}
 				else {
